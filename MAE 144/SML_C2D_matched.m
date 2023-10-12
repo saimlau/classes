@@ -1,4 +1,5 @@
 function Dz = SML_C2D_matched(Ds,h,omega, strictly_causal)
+   if logical(sum(Ds.p==0)) && omega == 0, error("Omega cannot be 0 when there is a pole at 0!!!"), end
    if nargin<4, strictly_causal=false; if nargin<3, omega=0;end,if nargin<2,h=1;end,end
    syms temp
    m=Ds.num.n; n=Ds.den.n;
