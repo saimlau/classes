@@ -1,0 +1,26 @@
+function [Dz,K] = SML_C2D_matched(Ds,h,omega, strictly_causal)
+   if nargin<4, strictly_causal=false; if nargin<3, omega=0;end,if nargin<2,h=1;end,end
+   syms temp
+   m=Ds.num.n; n=Ds.den.n;
+   c = string(class(Ds.z)); g = string(class(Ds.p));
+   if c=="sym" || g=="sym", z_ = [temp]; p_ = [temp]; 
+   else z_=[1]; p_=[1]; end
+   if strictly_causal, z_(1:n-1) = ones(1,n-1)*-1; else, z_(1:n) = ones(1,n)*-1; end
+   p_(1:n) = ones(1,n);
+   for j = 1:n, p_(j) = exp(Ds.p(j)*h); end
+   if m>=1, for j = 1:m, z_(j) = exp(Ds.z(j)*h);end, end
+   tem = 1;
+   for j=1:m, tem = tem*(omega*1i-Ds.z(j)); end
+   for j=1:n, tem = tem/(omega*1i-Ds.p(j)); end
+   tem2 = 1;
+   for j=1:length(z_), if exp(omega*1i*h)==z_(j), continue, end
+       tem2 = tem2*(exp(omega*1i*h)-z_(j)); end
+   for j=1:length(p_), if exp(omega*1i*h)==p_(j), continue, end
+       tem2 = tem2/(exp(omega*1i*h)-p_(j)); end
+   K = norm(tem)/norm(tem2)*Ds.K;
+   p_(2)
+   z_
+
+   Dz = RR_tf(z_,p_,K);
+   Dz.h = h;
+end
