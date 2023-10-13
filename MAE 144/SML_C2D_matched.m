@@ -23,6 +23,7 @@ function Dz = SML_C2D_matched(Ds,h,omega,strictly_causal)
    for j=1:length(z_), tem2 = tem2*(exp(omega*1i*h)-z_(j)); end
    for j=1:length(p_), tem2 = tem2/(exp(omega*1i*h)-p_(j)); end
    K = norm(tem)/norm(tem2)*Ds.K;
+   if isnan(K), error("Use a sllightly different omega bar!!!"), end
    if c=="sym" || g=="sym", z_=simplify(z_); p_=simplify(p_); K=simplify(K); end
    Dz = RR_tf(z_,p_,K);
    Dz.h = h;

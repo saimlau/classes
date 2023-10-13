@@ -3,9 +3,9 @@
 clear,close all
 disp("Test 1: Comparing with MATLAB provided c2d")
 Ds = RR_tf([-1],[0 -10],1)
-h = 1; omega = 0.000001i;
+h = 3; omega = 0.00001i;
 Dz_SML_C2D = SML_C2D_matched(Ds,h,omega,true)
-Dz_Matlab = c2d(zpk([-1],[0 -10],1),1,'matched')
+Dz_Matlab = c2d(zpk([-1],[0 -10],1),h ,'matched')
 Dss = tf(Ds.num.poly,Ds.den.poly);
 Dzz = tf(Dz_SML_C2D.num.poly,Dz_SML_C2D.den.poly,h); 
 bode(Dss,Dz_Matlab,Dzz),legend
