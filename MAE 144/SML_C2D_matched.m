@@ -1,7 +1,8 @@
-function Dz = SML_C2D_matched(Ds,h,omega, strictly_causal)
-% function Dz = SML_C2D_matched(Ds,h,omega, strictly_causal)
+function Dz = SML_C2D_matched(Ds,h,omega,strictly_causal)
+% function Dz = SML_C2D_matched(Ds,h,omega,strictly_causal)
 % convert Ds(s) to Dz(z) using pole-zeromapping,
-% h = timestep, omega = omega bar, strictly_causal takes true/false
+% h = timestep, omega = omega bar, strictly_causal = true/false
+% Ds must be an RR_tf object
 % TEST: run SML_c2dTest, it compares this code with matlab c2d(Ds,h,'matched'),
 %       it also outputs symbolic results for comparsion with hand calculations
    if logical(sum(Ds.p==0)) && omega == 0, error("Omega cannot be 0 when there is a pole at 0!!!"), end
@@ -22,6 +23,7 @@ function Dz = SML_C2D_matched(Ds,h,omega, strictly_causal)
    for j=1:length(z_), tem2 = tem2*(exp(omega*1i*h)-z_(j)); end
    for j=1:length(p_), tem2 = tem2/(exp(omega*1i*h)-p_(j)); end
    K = norm(tem)/norm(tem2)*Ds.K;
+   if c=="sym" || g=="sym", z_=simplify(z_); p_=simplify(p_); K=simplify(K); end
    Dz = RR_tf(z_,p_,K);
    Dz.h = h;
 end
