@@ -1,0 +1,10 @@
+Stanford/ME 285/Project/
+
+*.vscode/
+
+Stanford/CS 229/project/datasets/
+Stanford/CS 229/project/trained_models/
+Stanford/CS 229/project/pretrained_models/
+Stanford/CS 229/project/log/
+
+
