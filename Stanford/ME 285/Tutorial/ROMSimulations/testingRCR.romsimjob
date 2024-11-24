@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mitk_job model_name="aorta-iliacs" model_order="1" mesh_name="" status="Simulation done" version="1.0">
+    <job>
+        <model_props />
+        <basic_props>
+            <prop key="Fluid Density" value="1.06" />
+            <prop key="Fluid Viscosity" value="0.04" />
+        </basic_props>
+        <cap_props>
+            <cap name="cap_aorta">
+                <prop key="Analytic Shape" value="parabolic" />
+                <prop key="BC Type" value="Prescribed Velocities" />
+                <prop key="Flip Normal" value="True" />
+                <prop key="Flow Rate" value="0.0 -100&#x0D;&#x0A;1.0 -100" />
+                <prop key="Fourier Modes" value="10" />
+                <prop key="Original File" value="steady.flow" />
+                <prop key="Period" value="1.0" />
+                <prop key="Point Number" value="201" />
+            </cap>
+            <cap name="cap_aorta_2">
+                <prop key="BC Type" value="RCR" />
+                <prop key="C Values" value="0.01" />
+                <prop key="Pressure" value="13330" />
+                <prop key="R Values" value="100 1000" />
+                <prop key="Values" value="100 0.01 1000" />
+            </cap>
+            <cap name="cap_left-iliac">
+                <prop key="BC Type" value="RCR" />
+                <prop key="C Values" value="0.01" />
+                <prop key="Pressure" value="13330" />
+                <prop key="R Values" value="100 1000" />
+                <prop key="Values" value="100 0.01 1000" />
+            </cap>
+        </cap_props>
+        <convert_results_props>
+            <prop key="Export NumPy" value="0" />
+            <prop key="Project Centerlines" value="0" />
+            <prop key="Project To 3D Mesh" value="0" />
+            <prop key="Simulation Name" value="aorta-iliacs" />
+        </convert_results_props>
+        <mesh_props>
+            <prop key="Adaptive Meshing" value="0" />
+            <prop key="Number of segments per branch" value="1" />
+        </mesh_props>
+        <wall_props>
+            <prop key="Material Model" value="OLUFSEN" />
+            <prop key="Olufsen Material Exponent" value="1.0" />
+            <prop key="Olufsen Material K1" value="0.0" />
+            <prop key="Olufsen Material K2" value="-22.5267" />
+            <prop key="Olufsen Material K3" value="1.0e7" />
+            <prop key="Olufsen Material Pressure" value="0.0" />
+        </wall_props>
+        <var_props />
+        <solver_props>
+            <prop key="Number of Timesteps" value="1000" />
+            <prop key="Number of Timesteps between Saving Data" value="10" />
+            <prop key="Time Step Size" value="0.001" />
+        </solver_props>
+        <run_props />
+    </job>
+</mitk_job>

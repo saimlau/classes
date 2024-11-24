@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ImageObjectInformation creation_time="1626138185" version="1.0" modification_time="1626138185">
+    <timestep id="0">
+        <created_with_simvascular_version>2021.06</created_with_simvascular_version>
+        <path></path>
+        <image_file_name>aorta.vti</image_file_name>
+        <image_header_file_name>aorta.vti.hdr</image_header_file_name>
+        <image_name>aorta</image_name>
+        <data_is_local_copy>true</data_is_local_copy>
+        <scale_factor>0.1</scale_factor>
+    </timestep>
+</ImageObjectInformation>
+

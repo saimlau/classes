@@ -1,0 +1,60 @@
+\item \points{15} 
+
+%\tnote{to update math notations below. }
+%\tnote{double check consistenty with code. Ideally we should make minimal changes to the code}
+
+\begin{enumerate}[label=\roman*.]
+    \item \subquestionpoints{3} Compute the following partial derivatives for back-propagation.
+    Note: you can keep $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial \bar{h}_{\theta}(x^{(i)})}$ in the formula.
+    \begin{itemize}
+        \item $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial W^{[2]}} \in \mathbb{R}^{m \times k}$
+        \item $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial b^{[2]}} \in \mathbb{R}^k$
+        \item $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial a^{(i)}} \in \mathbb{R}^m$
+    \end{itemize}
+
+    \item \subquestionpoints{1} Compute the following partial derivative for back-propagation.
+    Note: you can keep $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial a^{(i)}}$ in the formula.
+    \begin{itemize}
+        \item $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial z^{(i)}} \in \mathbb{R}^m$
+    \end{itemize}
+
+    \item \subquestionpoints{2} Compute the following partial derivatives for back-propagation.
+    Note: you can keep $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial z^{(i)}}$ in the formula.
+    \begin{itemize}
+        \item $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial W^{[1]}} \in \mathbb{R}^{d \times m}$
+        \item $\frac{\partial \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i)}), y^{(i)})}{\partial b^{[1]}} \in \mathbb{R}^m$
+    \end{itemize}
+
+    \item \subquestionpoints{9} 
+    Implement both forward-propagation and back-propagation for the above loss function $J_{MB} = \frac{1}{B}\sum_{b=1}^B \ell_\textup{CE}(\bar{h}_{\theta}(x^{(i_b)}),y^{(i_b)})
+    $. % \tnote{changed the equation}.
+    Initialize the weights of the network by sampling values from a standard normal
+    distribution. Initialize the bias/intercept term to 0.
+    Set the number of hidden units to be 300, and learning rate to be 5. Set $B = 1,000$
+    (mini batch size). This means that we train with 1,000 examples in each iteration.
+    Therefore, for each epoch, we need 50 iterations to cover the entire training data.
+    The images are pre-shuffled. So you don't need to randomly sample the data, and can
+    just create mini-batches sequentially.
+    
+    
+    Train the model with mini-batch gradient descent
+    as described above. Run the training for 30 epochs. At the end of each epoch, calculate
+    the value of loss function averaged over the entire training set, and plot it
+    (y-axis) against the number of epochs (x-axis). In the same image, plot the value
+    of the loss function averaged over the dev set, and plot it against the number of epochs.
+    
+    Similarly, in a new image, plot the accuracy (on y-axis) over the training set,
+    measured as the fraction of correctly classified examples, versus the number of epochs
+    (x-axis). In the same image, also plot the accuracy over the dev set versus number of epochs.
+    
+    \textbf{Submit the two plots (one for loss vs epoch, another for accuracy vs epoch) in your writeup.}
+    
+    Also, at the end of 30 epochs, save the learnt parameters (i.e., all the weights and biases)
+    into a file, so that next time you can directly initialize the parameters with
+    these values from the file, rather than re-training all over. You do NOT need to
+    submit these parameters.
+
+    \textbf{Hint:} Be sure to vectorize your code as much as possible! Training can be
+very slow otherwise. For better vectorization, use one-hot label encodings in the code ($e_y$ in part (a)).
+
+  \end{enumerate}
