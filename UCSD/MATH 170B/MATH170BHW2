@@ -1,0 +1,15 @@
+clear,clc,close all
+f = @(x) x-2.*exp(-x);
+r = BisectionRoot(@(x) x-2.*exp(-x), 31,123)
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('BisectionRoot')" style="font-weight:bold">BisectionRoot</a>
+a and b needs to be on opposite sides of the solution.} 
+r = BisectionRoot(@(x) x-2.*exp(-x), 23412,123)
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('BisectionRoot')" style="font-weight:bold">BisectionRoot</a>
+a and b needs to be on opposite sides of the solution.} 
+r = BisectionRoot(@(x) x-2.*exp(-x), 0,5)
+r =
+    0.8526
+r = BisectionRoot(@(x) x-2.*exp(-x), 5,0)
+r =
+    0.8526
+diary off
