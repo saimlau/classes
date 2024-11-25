@@ -27,9 +27,9 @@ def main():
     # parse command line arguments
     parser = argparse.ArgumentParser(description='Train a ViT on dataset')
     parser.add_argument('-d', '--data', default="../datasets/DAiSEE/Labels", type=str, help='datasets to train/eval model on')
-    parser.add_argument('-o', '--output', default="../trained_models/exp8_model2", type=str, help='output file to write results to')
+    parser.add_argument('-o', '--output', default="../trained_models", type=str, help='output file to write results to')
     parser.add_argument('-m', '--base_model', default="google/vit-base-patch16-224-in21k", type=str, help='The base model to use')
-    parser.add_argument('-g', '--gpu', default=False, help='Train on the GPU if supported')
+    parser.add_argument('-g', '--gpu', default=True, help='Train on the GPU if supported')
     args = parser.parse_args()
 
     # Parse Args

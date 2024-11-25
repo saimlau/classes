@@ -3,7 +3,7 @@ import cv2
 from PIL import Image
 import numpy as np
 
-model_path = './../pretrained_models/FacialEmotionRecognitionModels/vit_model'
+model_path = '../trained_models/emotion_test/'
 
 # Load the image processor
 processor = ViTImageProcessor.from_pretrained(model_path)
