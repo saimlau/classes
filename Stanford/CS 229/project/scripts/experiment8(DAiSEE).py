@@ -27,7 +27,7 @@ def main():
     # parse command line arguments
     parser = argparse.ArgumentParser(description='Train a ViT on dataset')
     parser.add_argument('-d', '--data', default="../datasets/DAiSEE/Labels", type=str, help='datasets to train/eval model on')
-    parser.add_argument('-o', '--output', default="../trained_models", type=str, help='output file to write results to')
+    parser.add_argument('-o', '--output', default="../trained_models/model1_orig", type=str, help='output file to write results to')
     parser.add_argument('-m', '--base_model', default="google/vit-base-patch16-224-in21k", type=str, help='The base model to use')
     parser.add_argument('-g', '--gpu', default=True, help='Train on the GPU if supported')
     args = parser.parse_args()
@@ -45,7 +45,7 @@ def main():
 
     # Load the dataset into memory, and convert to a hugging face dataset
     print("Preparing train dataset...")
-    train_file = "test.csv"    ## modified
+    train_file = "test2.csv"    ## modified
     ds = ImageFileClassificationDataset(
         data_dir=args.data,
         file=train_file,
@@ -54,7 +54,7 @@ def main():
     )
     train_dataset = ds.to_hf_dataset()
     
-    test_file = "validation.csv"
+    test_file = "validation2.csv"
     ds = ImageFileClassificationDataset(
         data_dir=args.data,
         file=test_file,
