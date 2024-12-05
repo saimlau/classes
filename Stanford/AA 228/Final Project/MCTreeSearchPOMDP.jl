@@ -8,7 +8,11 @@ using Random
 using StatsBase
 using Dierckx
 using Distributions
+using IterTools
+using Base.Threads
+using JLD2
 include("utils.jl")
+include("simulator.jl")
 print("\033c")
 
 struct HistoryMonteCarloTreeSearch
@@ -21,7 +25,9 @@ struct HistoryMonteCarloTreeSearch
     U # value function estimate
 end
 
-function explore(π::HistoryMonteCarloTreeSearch, h)
+bonus(Nha, Nh) = Nha == 0 ? Inf : sqrt(log(Nh)/Nha)   # Algorithm 9.7 -> eqn. 22.3
+
+function explore(π::HistoryMonteCarloTreeSearch, h)    # Algorithm 22.1
     A, N, Q, c = π.P.A, π.N, π.Q, π.c
     Nh = sum(get(N, (h,a), 0) for a in A)
     return argmax(a->Q[(h,a)] + c*bonus(N[(h,a)], Nh), A)
@@ -56,8 +62,34 @@ function (π::HistoryMonteCarloTreeSearch)(b, h=[])
     return argmax(a->π.Q[(h,a)], π.P.A)
 end
 
-function compute()
-    γ = 0.9
-    S = 
-    P = POMDP()
+
+γ = 0.9;
+S = 0:67227;
+A = 1:6;
+𝒪 = 0:67227;
+P = POMDP(γ,S,A,𝒪,Transistion,Reward,ObsModel,TRO);
+N = Dict();
+Q = Dict();
+d = 15;  # depth
+m = 50;
+c = 2;
+# k_max = 10; # maximum number of iterations of QMDP  # Example 22.1
+# πQMDP = solve(QMDP(k_max), P);
+# save_object("QMPD.jld2",πQMDP)
+# πQMDP = load_object("QMPD.jld2");
+# U(b) = utility(πQMDP, b);
+αBAWS = baws_lowerbound(P);
+U(s) = αBAWS[s+1];
+HMCTS = HistoryMonteCarloTreeSearch(P,N,Q,d,m,c,U);
+
+b = normalize(ones(length(S)),1);
+T = 30;
+ss = zeros(T+1);
+ss[1] = rand(S);
+for t in 1:T
+    a = HMCTS(b)
+    println(id2state(ss[t]))
+    println(a)
+    ss[t+1], r, o = TRO(ss[t],a)
+    b = updateb(b,P,a,o)
 end
