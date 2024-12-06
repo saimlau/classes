@@ -42,16 +42,16 @@ end
 #       Model-Specific stuff
 #######################################
 const DAYSLEFT = Dict(
-    0 => -15,
-    1 => -1,
+    0 => -30,
+    1 => 0,
     2 => 0,
     3 => 0,
     4 => 0,
     5 => 0,
-    6 => 10
+    6 => 20
 );
 const MENTALSTATE = Dict(
-    0 => -60,
+    0 => -5,
     1 => 3,
     2 => 3,
     3 => 3,
@@ -101,10 +101,20 @@ function possTransit(s,a)
         end
     else
         if x==0
-            push!(xs,x)
+            push!(xs,0,1,2,3)
             tem = copy(y)
             tem[a] = 6
             push!(ys,y,tem)
+            tem = copy(y)
+            tem[y.!=6] .-= 1
+            tem[tem.<0] .= 0
+            doneIdx = findall(y.==6)
+            push!(ys,tem)
+            for i in combinations(doneIdx)
+                tem2 = copy(tem)
+                tem2[i] .= 5
+                push!(ys,tem2)
+            end
         else
             push!(xs,x,x-1)
             tem = copy(y)
@@ -131,7 +141,17 @@ function Transistion(s,a,s′)
         end
     else
         if x==0
-            t *= y′[a]==6 ? 0.2 : 0.8
+            if x′==0
+                t *= 0.5
+                t *= y′[a]==6 ? 0.2 : 0.8
+            else
+                t *= 1/3
+                for i in eachindex(y)
+                    if y[i]==6
+                        t *= y′[i]==5 ? 0.3 : 0.7
+                    end
+                end
+            end
         else
             t *= x′==x ? 0.2 : 0.8
         end
@@ -174,11 +194,28 @@ function possPreTransit(a,s′)
                 end
             end
         else
-            push!(xs,x′,x′+1)
+            push!(xs,0,x′,x′+1)
             for j in 0:6
                 tem = copy(y′)
                 tem[a] = j
                 push!(ys,tem)
+            end
+            tem = copy(y′)
+            tem[y′.<=4] .+= 1
+            push!(ys,tem)
+            for i in combinations(findall(y′.==0))
+                tem3 = copy(tem)
+                tem3[i] .= 0
+                push!(ys,tem3)
+            end
+            doneIdx = findall(y′.==5)
+            tem4 = copy(ys)
+            for tem5 in tem4
+                for i in combinations(doneIdx)
+                    tem2 = copy(tem5)
+                    tem2[i] .= 6
+                    push!(ys,tem2)
+                end
             end
         end
     end
@@ -239,23 +276,27 @@ dis3 = SetCategorical([-1,0],[0.8,0.2]);
 function TRO(s,a)                        # x in {0,1,2,3}
     x,y = id2state(s)
     r = Reward(s,a)
-    if a ==6 #|| (x==0 && rand(SetCategorical([0,1],[0.7,0.3]))==1)
+    if a ==6
         x′ = rand([1,2,3])       
         y′ = [yi==6 ? rand(dis2) : yi-1 for yi in y]
     else
         r -= 3
         if x==0
-            x′ = x
-            y′ = copy(y)
-            y′[a] = rand(SetCategorical([6,y[a]],[0.2,0.8]))
+            x′ = rand(SetCategorical([x,rand([1,2,3])],[0.5,0.5]))
+            if x′==0
+                y′ = copy(y)
+                y′[a] = rand(SetCategorical([6,y[a]],[0.2,0.8]))
+            else
+                y′ = [yi==6 ? rand(dis2) : yi-1 for yi in y]
+            end
         else
             x′ = x+rand(dis3)
             y′ = copy(y)
             y′[a] = 6
         end
     end
-    y′[y′.<0] .= 0
     o = observe(a,x′,y′)
+    y′[y′.<0] .= 0
     if !(state2id(x′,y′) in possTransit(s,a))
         println(x′)
         println(y′)

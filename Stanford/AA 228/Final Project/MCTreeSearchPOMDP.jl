@@ -72,7 +72,7 @@ N = Dict();
 Q = Dict();
 d = 15;  # depth
 m = 50;
-c = 2;
+c = 1.2;
 # k_max = 10; # maximum number of iterations of QMDP  # Example 22.1
 # πQMDP = solve(QMDP(k_max), P);
 # save_object("QMPD.jld2",πQMDP)
@@ -82,14 +82,20 @@ c = 2;
 U(s) = αBAWS[s+1];
 HMCTS = HistoryMonteCarloTreeSearch(P,N,Q,d,m,c,U);
 
-b = normalize(ones(length(S)),1);
+b = zeros(length(S));
 T = 30;
-ss = zeros(T+1);
-ss[1] = rand(S);
+ss = Int.(zeros(T+1));
+ss[1] = state2id(3,[5,5,5,5,5]);
+b[ss[1]] = 1.0;
 for t in 1:T
     a = HMCTS(b)
     println(id2state(ss[t]))
     println(a)
     ss[t+1], r, o = TRO(ss[t],a)
     b = updateb(b,P,a,o)
+    if any(isnan.(b))
+        println(o)
+    end
+    # b = zeros(length(S));
+    # b[ss[t+1]] = 1.0;
 end
