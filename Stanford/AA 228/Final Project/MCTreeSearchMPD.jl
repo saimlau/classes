@@ -111,7 +111,8 @@ MCTS = MonteCarloTreeSearch(P,N,Q,d,m,c,U)
 
 T = 300;
 ss = Int.(zeros(T+1));
-ss[1] = state2id(3,[0,0,0,0,0]);
+# ss[1] = state2id(3,[0,0,0,0,0]);
+ss[1] = rand(S);
 rr = zeros(T)
 for t in 1:T
     a = MCTS(ss[t])

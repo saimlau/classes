@@ -51,7 +51,7 @@ const DAYSLEFT = Dict(
     6 => 10
 );
 const MENTALSTATE = Dict(
-    0 => -60,
+    0 => -50,
     1 => 3,
     2 => 3,
     3 => 3,

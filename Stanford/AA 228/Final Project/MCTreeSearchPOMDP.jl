@@ -70,8 +70,8 @@ A = 1:6;
 P = POMDP(γ,S,A,𝒪,Transistion,Reward,ObsModel,TRO);
 N = Dict();
 Q = Dict();
-d = 15;  # depth
-m = 50;
+d = 30;  # depth
+m = 100;
 c = 1.2;
 # k_max = 10; # maximum number of iterations of QMDP  # Example 22.1
 # πQMDP = solve(QMDP(k_max), P);
@@ -80,6 +80,7 @@ c = 1.2;
 # U(b) = utility(πQMDP, b);
 αBAWS = baws_lowerbound(P);
 U(s) = αBAWS[s+1];
+# U(s) = 0.0
 HMCTS = HistoryMonteCarloTreeSearch(P,N,Q,d,m,c,U);
 
 b = zeros(length(S));
@@ -92,10 +93,10 @@ for t in 1:T
     println(id2state(ss[t]))
     println(a)
     ss[t+1], r, o = TRO(ss[t],a)
-    b = updateb(b,P,a,o)
-    if any(isnan.(b))
-        println(o)
-    end
-    # b = zeros(length(S));
-    # b[ss[t+1]] = 1.0;
+    # b = updateb(b,P,a,o)
+    # if any(isnan.(b))
+    #     println(o)
+    # end
+    b = zeros(length(S));
+    b[ss[t+1]] = 1.0;
 end
