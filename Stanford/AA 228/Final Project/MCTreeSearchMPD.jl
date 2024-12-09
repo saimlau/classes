@@ -12,17 +12,7 @@ using IterTools
 using Base.Threads
 using JLD2
 include("utils.jl")
-include("simulator.jl")
 print("\033c")
-
-struct MDP           # Algorithm 7.1
-    γ # discount factor
-    S # state space
-    A # action space
-    T # transition function
-    R # reward function
-    TR # sample transition and reward
-end
 
 struct MonteCarloTreeSearch
     P # problem
@@ -69,55 +59,47 @@ function explore(π::MonteCarloTreeSearch, s)
     return argmax(a->Q[(s,a)] + c*bonus(N[(s,a)], Ns), A)
 end
 
-function TR(s,a)                        # x in {0,1,2,3}
-    x,y = id2state(s)
-    r = Reward(s,a)
-    if a ==6 #|| (x==0 && rand(SetCategorical([0,1],[0.7,0.3]))==1)
-        x′ = rand([1,2,3])       
-        y′ = [yi==6 ? rand(dis2) : yi-1 for yi in y]
-    else
-        r -= 3
-        if x==0
-            x′ = x
-            y′ = copy(y)
-            y′[a] = rand(SetCategorical([6,y[a]],[0.2,0.8]))
-        else
-            x′ = x+rand(dis3)
-            y′ = copy(y)
-            y′[a] = 6
-        end
-    end
-    y′[y′.<0] .= 0
-    # if !(state2id(x′,y′) in possTransit(s,a))
-    #     println(x′)
-    #     println(y′)
-    #     error("Getting impossible state!!!!!")
-    # end
-    return (state2id(x′,y′), r)
-end
-
 γ = 0.9;
 S = 0:67227;
 A = 1:6;
 P = MDP(γ,S,A,Transistion,Reward,TR)
-N = Dict();
-Q = Dict();
 d = 30;  # depth
-m = 100;
+m = 150;
 c = 1.2;
 U(s) = 0.0
-MCTS = MonteCarloTreeSearch(P,N,Q,d,m,c,U)
 
 
-T = 300;
-ss = Int.(zeros(T+1));
-# ss[1] = state2id(3,[0,0,0,0,0]);
-ss[1] = rand(S);
-rr = zeros(T)
-for t in 1:T
-    a = MCTS(ss[t])
-    println(id2state(ss[t]))
-    println(a)
-    ss[t+1], rr[t] = TR(ss[t],a)
+T = 90;
+K = 20   # Number of trials
+xx = Int.(zeros(T+1));
+yy = Int.(zeros(T+1,5));
+# ss[1] = rand(S);
+rr = zeros(T);
+TT = zeros(K);
+for k in 1:K
+    t_init = time()
+    N = Dict();
+    Q = Dict();
+    MCTS = MonteCarloTreeSearch(P,N,Q,d,m,c,U)
+    ss = Int.(zeros(T+1));
+    ss[:,1] .= state2id(0,[0,0,0,0,0]);
+    xtem = Int.(zeros(T+1));
+    ytem = Int.(zeros(T+1,5));
+    rtem = zeros(T);
+    for t in 1:T
+        a = MCTS(ss[t])
+        # println(id2state(ss[t]))
+        # println(a)
+        ss[t+1], rtem[t] = TR(ss[t],a)
+        xtem[t+1], ytem[t+1,:] = id2state(ss[t+1])
+    end
+    rr += (rtem-rr)./k
+    xx += (xtem-xx)./k
+    yy += (ytem-yy)./k
+    TT[k] = time()-t_init
+    println("$(k)th trial done.")
 end
-plot(1:T,rr)
+println("Done, average time used = $(mean(TT)) sec")
+println("Final accumulated reward = $(sum(rr))")
+plotResults("MCTS",T,rr,xx,yy)
+

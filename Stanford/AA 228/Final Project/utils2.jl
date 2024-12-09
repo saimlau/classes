@@ -325,6 +325,33 @@ function observe(a,x,y)
     end
     return obs2id(z,y)
 end
+
+function TR(s,a)                        # x in {0,1,2,3}
+    x,y = id2state(s)
+    r = Reward(s,a)
+    if a ==6 || (x==0 && rand(SetCategorical([0,1],[0.7,0.3]))==1)
+        x′ = rand([1,2,3])       
+        y′ = [yi==6 ? rand(dis2) : yi-1 for yi in y]
+    else
+        r -= 3
+        if x==0
+            x′ = x
+            y′ = copy(y)
+            y′[a] = rand(SetCategorical([6,y[a]],[0.2,0.8]))
+        else
+            x′ = x+rand(dis3)
+            y′ = copy(y)
+            y′[a] = 6
+        end
+    end
+    y′[y′.<0] .= 0
+    # if !(state2id(x′,y′) in possTransit(s,a))
+    #     println(x′)
+    #     println(y′)
+    #     error("Getting impossible state!!!!!")
+    # end
+    return (state2id(x′,y′), r)
+end
 #######################################
 
 struct POMDP
@@ -380,4 +407,13 @@ function baws_lowerbound(P::POMDP)        # Algorithm 21.4, Eqn. 21.5
     r = maximum(minimum(R(s, a) for s in S) for a in A) / (1-γ)
     α = fill(r, length(S))
     return α
+end
+
+struct MDP           # Algorithm 7.1
+    γ # discount factor
+    S # state space
+    A # action space
+    T # transition function
+    R # reward function
+    TR # sample transition and reward
 end

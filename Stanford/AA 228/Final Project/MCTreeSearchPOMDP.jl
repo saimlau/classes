@@ -68,35 +68,87 @@ S = 0:67227;
 A = 1:6;
 𝒪 = 0:67227;
 P = POMDP(γ,S,A,𝒪,Transistion,Reward,ObsModel,TRO);
-N = Dict();
-Q = Dict();
-d = 30;  # depth
-m = 100;
-c = 1.2;
+# N = Dict();
+# Q = Dict();
+d = 15;  # depth
+m = 900;
+c = 60;
 # k_max = 10; # maximum number of iterations of QMDP  # Example 22.1
 # πQMDP = solve(QMDP(k_max), P);
 # save_object("QMPD.jld2",πQMDP)
 # πQMDP = load_object("QMPD.jld2");
 # U(b) = utility(πQMDP, b);
-αBAWS = baws_lowerbound(P);
-U(s) = αBAWS[s+1];
-# U(s) = 0.0
-HMCTS = HistoryMonteCarloTreeSearch(P,N,Q,d,m,c,U);
+# αBAWS = baws_lowerbound(P);
+# U(s) = αBAWS[s+1];
+U(s) = 0.0
+# HMCTS = HistoryMonteCarloTreeSearch(P,N,Q,d,m,c,U);
 
+# b = zeros(length(S));
+# T = 90;
+# ss = Int.(zeros(T+1));
+# ss[1] = state2id(0,[0,0,0,0,0]);
+# b[ss[1]+1] = 1.0;
+# h = [];
+# for t in 1:T
+#     a = HMCTS(b,h)
+#     println(id2state(ss[t]))
+#     println(a)
+#     ss[t+1], r, o = TRO(ss[t],a)
+#     h = vcat(h, (a,o))
+#     if length(h)>3
+#         deleteat!(h,1)
+#     end
+#     b = updateb(b,P,a,o)
+#     if any(isnan.(b))
+#         println(o)
+#     end
+# end
+
+# xx = Int.(zeros(T+1));
+# yy = Int.(zeros(T+1,5));
+# for t in 1:T+1
+#     xx[t],yy[t,:] = id2state(ss[t])
+# end
+
+T = 90;
+K = 20;   # Number of trials
+xx = Int.(zeros(T+1));
+yy = Int.(zeros(T+1,5));
+rr = zeros(T);
 b = zeros(length(S));
-T = 30;
-ss = Int.(zeros(T+1));
-ss[1] = state2id(3,[5,5,5,5,5]);
-b[ss[1]] = 1.0;
-for t in 1:T
-    a = HMCTS(b)
-    println(id2state(ss[t]))
-    println(a)
-    ss[t+1], r, o = TRO(ss[t],a)
-    # b = updateb(b,P,a,o)
-    # if any(isnan.(b))
-    #     println(o)
-    # end
-    b = zeros(length(S));
-    b[ss[t+1]] = 1.0;
+b[ss[1]+1] = 1.0;
+TT = zeros(K);
+for k in 1:K
+    t_init = time()
+    N = Dict();
+    Q = Dict();
+    HMCTS = HistoryMonteCarloTreeSearch(P,N,Q,d,m,c,U);
+    h = []
+    ss = Int.(zeros(T+1))
+    ss[:,1] .= state2id(0,[0,0,0,0,0])
+    xtem = Int.(zeros(T+1))
+    ytem = Int.(zeros(T+1,5))
+    rtem = zeros(T)
+    for t in 1:T
+        a = HMCTS(b,h)
+        println(id2state(ss[t]))
+        println(a)
+        ss[t+1], rtem[t], o = TRO(ss[t],a)
+        xtem[t+1], ytem[t+1,:] = id2state(ss[t+1])
+        h = vcat(h, (a,o))
+        if length(h)>5
+            deleteat!(h,1)
+        end
+        # b = updateb(b,P,a,o)
+        b = zeros(length(S));
+        b[ss[t+1]+1] = 1.0;
+    end
+    rr += (rtem-rr)./k
+    xx += (xtem-xx)./k
+    yy += (ytem-yy)./k
+    TT[k] = time()-t_init
+    println("$(k)th trial done.")
 end
+println("Done, average time used = $(mean(TT)) sec")
+println("Final accumulated reward = $(sum(rr))")
+plotResults("HMCTS(PerfectO)",T,rr,xx,yy)

@@ -239,7 +239,7 @@ dis3 = SetCategorical([-1,0],[0.8,0.2]);
 function TRO(s,a)                        # x in {0,1,2,3}
     x,y = id2state(s)
     r = Reward(s,a)
-    if a ==6 #|| (x==0 && rand(SetCategorical([0,1],[0.7,0.3]))==1)
+    if a ==6 || (x==0 && rand(SetCategorical([0,1],[0.5,0.5]))==1)
         x′ = rand([1,2,3])       
         y′ = [yi==6 ? rand(dis2) : yi-1 for yi in y]
     else
@@ -256,11 +256,11 @@ function TRO(s,a)                        # x in {0,1,2,3}
     end
     y′[y′.<0] .= 0
     o = observe(a,x′,y′)
-    if !(state2id(x′,y′) in possTransit(s,a))
-        println(x′)
-        println(y′)
-        error("Getting impossible state!!!!!")
-    end
+    # if !(state2id(x′,y′) in possTransit(s,a))
+    #     println(x′)
+    #     println(y′)
+    #     error("Getting impossible state!!!!!")
+    # end
     return (state2id(x′,y′), r, o)
 end
 
@@ -283,6 +283,33 @@ function observe(a,x,y)
         end
     end
     return obs2id(z,y)
+end
+
+function TR(s,a)                        # x in {0,1,2,3}
+    x,y = id2state(s)
+    r = Reward(s,a)
+    if a ==6 || (x==0 && rand(SetCategorical([0,1],[0.7,0.3]))==1)
+        x′ = rand([1,2,3])       
+        y′ = [yi==6 ? rand(dis2) : yi-1 for yi in y]
+    else
+        r -= 3
+        if x==0
+            x′ = x
+            y′ = copy(y)
+            y′[a] = rand(SetCategorical([6,y[a]],[0.2,0.8]))
+        else
+            x′ = x+rand(dis3)
+            y′ = copy(y)
+            y′[a] = 6
+        end
+    end
+    y′[y′.<0] .= 0
+    # if !(state2id(x′,y′) in possTransit(s,a))
+    #     println(x′)
+    #     println(y′)
+    #     error("Getting impossible state!!!!!")
+    # end
+    return (state2id(x′,y′), r)
 end
 #######################################
 
@@ -339,4 +366,47 @@ function baws_lowerbound(P::POMDP)        # Algorithm 21.4, Eqn. 21.5
     r = maximum(minimum(R(s, a) for s in S) for a in A) / (1-γ)
     α = fill(r, length(S))
     return α
+end
+
+struct MDP           # Algorithm 7.1
+    γ # discount factor
+    S # state space
+    A # action space
+    T # transition function
+    R # reward function
+    TR # sample transition and reward
+end
+
+function plotResults(name,T,rr,xx,yy)
+    plot(1:T,rr, label="", framestyle = :box, xguidefontsize=12, yguidefontsize=12,legendfontsize=12, ytickfontsize = 12, xtickfontsize = 12,
+    linewidth=1, background_color_legend = nothing, foreground_color_legend = nothing, legend=:bottomright, background_color = :transparent)
+    xlabel!("time (days)")
+    ylabel!("Reward")
+    # title!("Reward over 90 days.")
+    savefig("rewardOver$(T)Days($name).png")
+
+    acR = accumulate(+,rr);
+    plot(1:T,acR, label="", framestyle = :box, xguidefontsize=12, yguidefontsize=12,legendfontsize=12, ytickfontsize = 12, xtickfontsize = 12,
+    linewidth=1, background_color_legend = nothing, foreground_color_legend = nothing, legend=:bottomright, background_color = :transparent)
+    xlabel!("time (days)")
+    ylabel!("accumulated utility")
+    # title!("Accumulated reward over 90 days.")
+    savefig("accRewardOver$(T)Days($name).png")
+
+    plot(0:T,xx, label="", framestyle = :box, xguidefontsize=12, yguidefontsize=12,legendfontsize=12, ytickfontsize = 12, xtickfontsize = 12,
+    linewidth=1, background_color_legend = nothing, foreground_color_legend = nothing, legend=:bottomright, background_color = :transparent)
+    xlabel!("time (days)")
+    ylabel!("Mental State")
+    # title!("Accumulated reward over 90 days.")
+    savefig("MStateOver$(T)Days($name).png")
+
+    plot(framestyle = :box, xguidefontsize=12, yguidefontsize=12,legendfontsize=12, ytickfontsize = 12, xtickfontsize = 12,
+    linewidth=1, background_color_legend = nothing, foreground_color_legend = nothing, legend=:bottomright, background_color = :transparent)
+    for i in 1:5
+        plot!(0:T,yy[:,i], label="Task $i")
+    end
+    xlabel!("time (days)")
+    ylabel!("Days Until Due")
+    # title!("Accumulated reward over 90 days.")
+    savefig("TStateOver$(T)Days($name).png")
 end
