@@ -111,7 +111,7 @@ U(s) = 0.0
 # end
 
 T = 90;
-K = 20;   # Number of trials
+K = 1;   # Number of trials
 xx = Int.(zeros(T+1));
 yy = Int.(zeros(T+1,5));
 rr = zeros(T);
@@ -139,9 +139,9 @@ for k in 1:K
         if length(h)>5
             deleteat!(h,1)
         end
-        # b = updateb(b,P,a,o)
-        b = zeros(length(S));
-        b[ss[t+1]+1] = 1.0;
+        b = updateb(b,P,a,o)
+        # b = zeros(length(S));
+        # b[ss[t+1]+1] = 1.0;
     end
     rr += (rtem-rr)./k
     xx += (xtem-xx)./k
@@ -151,4 +151,4 @@ for k in 1:K
 end
 println("Done, average time used = $(mean(TT)) sec")
 println("Final accumulated reward = $(sum(rr))")
-plotResults("HMCTS(PerfectO)",T,rr,xx,yy)
+plotResults("HMCTS1",T,rr,xx,yy)

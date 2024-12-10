@@ -382,7 +382,7 @@ function plotResults(name,T,rr,xx,yy)
     linewidth=1, background_color_legend = nothing, foreground_color_legend = nothing, legend=:bottomright, background_color = :transparent)
     xlabel!("time (days)")
     ylabel!("Reward")
-    # title!("Reward over 90 days.")
+    # title!(name)
     savefig("rewardOver$(T)Days($name).png")
 
     acR = accumulate(+,rr);
@@ -390,14 +390,14 @@ function plotResults(name,T,rr,xx,yy)
     linewidth=1, background_color_legend = nothing, foreground_color_legend = nothing, legend=:bottomright, background_color = :transparent)
     xlabel!("time (days)")
     ylabel!("accumulated utility")
-    # title!("Accumulated reward over 90 days.")
+    # title!(name)
     savefig("accRewardOver$(T)Days($name).png")
 
     plot(0:T,xx, label="", framestyle = :box, xguidefontsize=12, yguidefontsize=12,legendfontsize=12, ytickfontsize = 12, xtickfontsize = 12,
     linewidth=1, background_color_legend = nothing, foreground_color_legend = nothing, legend=:bottomright, background_color = :transparent)
     xlabel!("time (days)")
     ylabel!("Mental State")
-    # title!("Accumulated reward over 90 days.")
+    # title!(name)
     savefig("MStateOver$(T)Days($name).png")
 
     plot(framestyle = :box, xguidefontsize=12, yguidefontsize=12,legendfontsize=12, ytickfontsize = 12, xtickfontsize = 12,
@@ -407,6 +407,6 @@ function plotResults(name,T,rr,xx,yy)
     end
     xlabel!("time (days)")
     ylabel!("Days Until Due")
-    # title!("Accumulated reward over 90 days.")
+    # title!(name)
     savefig("TStateOver$(T)Days($name).png")
 end
