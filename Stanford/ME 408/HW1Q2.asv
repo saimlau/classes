@@ -11,14 +11,10 @@ xs = -2*pi:0.01:2*pi;
 plot(xs, fh(xs))
 xlabel("x")
 xticks(-2*pi:pi:2*pi)
-xticklabels(["-2π","-π","0","π","2π"])
-set(gca,"FontSize",15,"LineWidth",2)
+xticklabels("-2")
 figure
 plot(xs, gh(xs))
 xlabel("x")
-xticks(-2*pi:pi:2*pi)
-xticklabels(["-2π","-π","0","π","2π"])
-set(gca,"FontSize",15,"LineWidth",2)
 
 function out = fk(k)
 % if mod(k,2)==0
