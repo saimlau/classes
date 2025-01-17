@@ -17,9 +17,9 @@ function simulateTunedTrackSystem
     zeta = 0.55;
     b = 2*sqrt(m*km)*zeta;
     %-- FILL IN THE THREE LINES BELOW, e.g., kt_compliant = 0.1*km; --%
-    kt_compliant = %-- FILL IN HERE --%
-    kt_tuned = %-- FILL IN HERE --%
-    kt_stiff = %-- FILL IN HERE --%
+    kt_compliant = km*1e-1; %-- FILL IN HERE --%
+    kt_tuned = 3*km; %-- FILL IN HERE --%
+    kt_stiff = km*1e2; %-- FILL IN HERE --%
     
     % Use Matlab's ode45 to integrate equations of motion
     % Syntax:
@@ -49,7 +49,7 @@ function simulateTunedTrackSystem
     ylabel('x_t')
     title('Displacement of track')
     xlabel('t')
-    
+    hT_c_rigid = pi/sqrt(km/m*(1-b^2/(4*m*km)))
 end
 
 
@@ -81,8 +81,8 @@ function Xd = tunedTrack_equationsOfMotion(t, X, m, km, b, kt)
     % Compute state derivatives
     %-- FILL IN THE TWO LINES BELOW --%
     %-- Remember to use the same variables names from above! --%
-    xtd = %-- FILL IN HERE --%
-    xrdd = %-- FILL IN HERE --%
+    xtd = xrd+km./b.*(xr-xt)-kt/b.*xt; %-- FILL IN HERE --%
+    xrdd = -kt/m*xt; %-- FILL IN HERE --%
     
     % Return vector of state derivatives
     Xd(1,1) = xrd;
